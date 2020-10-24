@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .palette td {
+        text-align: center;
+        font-family: consolas;
+        font-weight: bold;
+        font-size: large;
+        color: white;
+        background-color: black;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    .sizeInput {
+        width: 70px;
+        font-size: 30px;
+    }
+</style>
+
+<body>
+    <textarea id="hexList" rows="10" cols="50" placeholder="Enter list of hex codes"></textarea><br>
+    <table id="form">
+        <tr>
+            <td><input type="button" onclick="createColorPalette()" value="Generate palette"></td>
+        </tr>
+        <tr>
+            <td>Horizontal Width:</td>
+            <td><input type="number" id="hWidth"  step="5" class="sizeInput" onchange="resizePalette()" value="85"></td>
+            <td>Horizontal Height:</td>
+            <td><input type="number" id="hHeight" step="5" class="sizeInput" onchange="resizePalette()" value="150"></td>
+        </tr>
+        <tr>
+            <td>Vertical Width:</td>
+            <td><input type="number" id="vWidth"  step="5" class="sizeInput" onchange="resizePalette()" value="200"></td>
+            <td>Vertical Height:</td>
+            <td><input type="number" id="vHeight" step="5" class="sizeInput" onchange="resizePalette()" value="50"></td>
+        </tr>
+    </table>
+    <br><br>
+
+    <table id="hColorTable" class="palette">
+        <tbody></tbody>
+    </table>
+
+    <br><br>
+
+    <table id="vColorTable" class="palette">
+        <tbody></tbody>
+    </table>
+
+    <script>
+        function getColorList() {
+            return document.getElementById("hexList").value.split(/[|,\n\t]+/);
+        }
+
+        function resizePalette() {
+            var colorCount = getColorList().length+1;
+            
+            var hWidth  = document.getElementById("hWidth").value;
+            var hHeight = document.getElementById("hHeight").value;
+
+            var vWidth   = document.getElementById("vWidth").value;
+            var vHeight  = document.getElementById("vHeight").value;
+
+            document.getElementById("hColorTable").style.height = `${hHeight}px`;
+            document.getElementById("hColorTable").style.width = `${hWidth*colorCount}px`;
+
+            document.getElementById("vColorTable").style.height = `${vHeight*colorCount}px`;
+            document.getElementById("vColorTable").style.width = `${vWidth}px`;
+        }
+
+        function createColorPalette() {
+            var colorList = getColorList()
+
+            var hOldtbody = document.getElementById("hColorTable").tBodies[0];
+            var hNewtbody = document.createElement('tbody');
+
+            var vOldtbody = document.getElementById("vColorTable").tBodies[0];
+            var vNewtbody = document.createElement('tbody');
+
+            // Populate palette tables
+            var rowHor = hNewtbody.insertRow(0);
+            for (var i = 0; i < colorList.length; i++) {
+                var cellHor = rowHor.insertCell(-1);
+                var cellVert = vNewtbody.insertRow(-1).insertCell(0);
+
+                cellHor.innerHTML = cellVert.innerHTML = colorList[i];
+                cellHor.style.backgroundColor = cellVert.style.backgroundColor = colorList[i];
+            }
+
+            vOldtbody.parentNode.replaceChild(vNewtbody, vOldtbody);
+            hOldtbody.parentNode.replaceChild(hNewtbody, hOldtbody);
+
+            resizePalette()
+        }
+    </script>
+</body>
+</html>
